@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Where your energy is sitting — a compass reading</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDEAE2; --ink:#221F1B; --ink-soft:#514C43;
+    --jade:#33503F; --jade-deep:#1F332A; --clay:#8C4A2F; --gold:#A9822C;
+    --line:rgba(34,31,27,0.16); --card:#F7F5EF;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Work Sans', sans-serif;line-height:1.6;}
+  .wrap{max-width:760px;margin:0 auto;padding:56px 24px 96px;}
+  h1,h2,h3{font-family:'Fraunces', serif;font-weight:500;margin:0;}
+  .kicker{font-size:14px;color:var(--jade);margin-bottom:10px;}
+  h1{font-size:38px;line-height:1.15;max-width:11ch;margin-bottom:14px;}
+  .lede{font-size:17px;color:var(--ink-soft);max-width:48ch;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:2px;padding:32px;margin-bottom:28px;}
+  .field{margin-bottom:22px;}
+  .field:last-child{margin-bottom:0;}
+  label{display:block;font-size:14px;color:var(--ink-soft);margin-bottom:8px;}
+  select{width:100%;font-family:'Work Sans', sans-serif;font-size:16px;padding:11px 12px;background:var(--paper);border:1px solid var(--line);border-radius:2px;color:var(--ink);appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%23514C43' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;}
+  .dirgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:4px;}
+  .dirbtn{border:1px solid var(--line);background:var(--paper);border-radius:2px;padding:10px 4px;font-size:13px;text-align:center;cursor:pointer;color:var(--ink-soft);}
+  .dirbtn.active{background:var(--jade);color:var(--paper);border-color:var(--jade);}
+  .compasshelp{display:flex;align-items:center;gap:10px;margin-top:10px;}
+  .compasshelp button{width:auto;flex:none;padding:8px 14px;font-size:13px;background:transparent;color:var(--jade);border:1px solid var(--jade);}
+  .compasshelp button:hover{background:var(--jade);color:var(--paper);}
+  .heading{font-size:13px;color:var(--ink-soft);}
+  button.primary{width:100%;font-family:'Work Sans', sans-serif;font-size:16px;font-weight:500;padding:14px;background:var(--jade);color:var(--paper);border:none;border-radius:2px;cursor:pointer;margin-top:10px;}
+  button.primary:hover{background:var(--jade-deep);}
+  .err{color:var(--clay);font-size:13px;margin-top:8px;display:none;}
+  .report{display:none;}
+  .report .panel{border-color:var(--jade);}
+  .stat-row{display:flex;gap:14px;margin-bottom:22px;}
+  .stat{flex:1;background:var(--paper);border-radius:2px;padding:14px 16px;}
+  .stat .label{font-size:12px;color:var(--ink-soft);margin-bottom:4px;}
+  .stat .value{font-family:'Fraunces', serif;font-size:22px;}
+  .finding{font-size:16px;margin-bottom:14px;}
+  .fix{font-size:15px;color:var(--ink-soft);padding-left:16px;border-left:2px solid var(--gold);}
+  .note{font-size:13px;color:var(--ink-soft);margin-top:36px;border-top:1px solid var(--line);padding-top:16px;}
+  .verdict{display:inline-block;font-size:13px;padding:4px 10px;border-radius:2px;margin-bottom:14px;}
+  .verdict.good{background:rgba(51,80,63,0.12);color:var(--jade);}
+  .verdict.watch{background:rgba(140,74,47,0.12);color:var(--clay);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header style="margin-bottom:48px;">
+    <p class="kicker">Compass reading — layout 002</p>
+    <h1>Where your energy is sitting</h1>
+    <p class="lede">This one uses true compass direction, not the door — the classical eight-direction method a lineage-trained reading is built on. You'll need to know which way is north.</p>
+  </header>
+
+  <div class="panel">
+    <div class="field">
+      <label for="room">Which room are we reading?</label>
+      <select id="room">
+        <option value="bedroom">Bedroom</option>
+        <option value="office">Home office</option>
+        <option value="living">Living room</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="piece">What are we placing?</label>
+      <select id="piece">
+        <option value="solid">Something heavy and solid — a wardrobe, bookshelf, large cabinet</option>
+        <option value="open">Something open or moving — a mirror, a window, a fish tank, an open shelf</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Standing at the centre of the room, which direction is it from you?</label>
+      <div class="dirgrid" id="dirgrid">
+        <div class="dirbtn" data-dir="N">N</div>
+        <div class="dirbtn" data-dir="NE">NE</div>
+        <div class="dirbtn" data-dir="E">E</div>
+        <div class="dirbtn" data-dir="SE">SE</div>
+        <div class="dirbtn" data-dir="S">S</div>
+        <div class="dirbtn" data-dir="SW">SW</div>
+        <div class="dirbtn" data-dir="W">W</div>
+        <div class="dirbtn" data-dir="NW">NW</div>
+      </div>
+      <div class="compasshelp">
+        <button id="compassBtn" type="button">Use my phone's compass</button>
+        <span class="heading" id="headingOut"></span>
+      </div>
+    </div>
+
+    <button class="primary" id="gen">Read this placement</button>
+    <p class="err" id="err">Pick a piece and a direction first.</p>
+  </div>
+
+  <div class="report" id="report">
+    <div class="panel">
+      <span class="verdict" id="verdict"></span>
+      <div class="stat-row">
+        <div class="stat">
+          <p class="label">Life area</p>
+          <p class="value" id="areaName">—</p>
+        </div>
+        <div class="stat">
+          <p class="label">This spot wants</p>
+          <p class="value" id="wants">—</p>
+        </div>
+      </div>
+      <p class="finding" id="finding"></p>
+      <p class="fix" id="fix"></p>
+    </div>
+  </div>
+
+  <p class="note">This uses the classical numbered-direction rule — north, southwest, east and southeast call for solid, still weight; northwest, west, northeast and south call for openness and movement. A full reading also reads what sits outside the building in each direction, not just furniture inside a single room.</p>
+</div>
+
+<script>
+var directions = {
+  N:  {area:'Career', wants:'solid', gua:'Kan'},
+  SW: {area:'Relationships', wants:'solid', gua:'Kun'},
+  E:  {area:'Family', wants:'solid', gua:'Zhen'},
+  SE: {area:'Wealth', wants:'solid', gua:'Xun'},
+  NW: {area:'Helpful people', wants:'open', gua:'Qian'},
+  W:  {area:'Creativity', wants:'open', gua:'Dui'},
+  NE: {area:'Knowledge', wants:'open', gua:'Gen'},
+  S:  {area:'Reputation', wants:'open', gua:'Li'}
+};
+
+var selectedDir = null;
+
+document.querySelectorAll('.dirbtn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.dirbtn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    selectedDir = btn.getAttribute('data-dir');
+  });
+});
+
+function pickClosest(deg){
+  var order = ['N','NE','E','SE','S','SW','W','NW'];
+  var idx = Math.round(deg / 45) % 8;
+  return order[idx];
+}
+
+document.getElementById('compassBtn').addEventListener('click', function(){
+  var out = document.getElementById('headingOut');
+  function handler(e){
+    var heading = e.webkitCompassHeading != null ? e.webkitCompassHeading : (e.alpha != null ? 360 - e.alpha : null);
+    if(heading == null){
+      out.textContent = "Couldn't read the compass on this device — pick manually.";
+      return;
+    }
+    var dir = pickClosest(heading);
+    out.textContent = 'Heading ~' + Math.round(heading) + 'deg — closest to ' + dir;
+    document.querySelectorAll('.dirbtn').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-dir') === dir);
+    });
+    selectedDir = dir;
+    window.removeEventListener('deviceorientation', handler, true);
+  }
+  if(typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function'){
+    DeviceOrientationEvent.requestPermission().then(function(state){
+      if(state === 'granted'){
+        window.addEventListener('deviceorientation', handler, true);
+      } else {
+        out.textContent = 'Compass permission was not granted — pick manually.';
+      }
+    }).catch(function(){
+      out.textContent = 'Compass not available here — pick manually.';
+    });
+  } else {
+    window.addEventListener('deviceorientation', handler, true);
+  }
+});
+
+document.getElementById('gen').addEventListener('click', function(){
+  var piece = document.getElementById('piece').value;
+  var err = document.getElementById('err');
+  if(!piece || !selectedDir){
+    err.style.display = 'block';
+    return;
+  }
+  err.style.display = 'none';
+
+  var d = directions[selectedDir];
+  var match = (piece === d.wants);
+
+  var verdict = document.getElementById('verdict');
+  verdict.textContent = match ? 'Well placed' : 'Worth adjusting';
+  verdict.className = 'verdict ' + (match ? 'good' : 'watch');
+
+  document.getElementById('areaName').textContent = d.area;
+  document.getElementById('wants').textContent = d.wants === 'solid' ? 'Weight, stillness' : 'Openness, flow';
+
+  var pieceLabel = piece === 'solid' ? 'a heavy, solid piece' : 'an open or moving piece';
+  var wantLabel = d.wants === 'solid' ? 'something solid and still' : 'something open and moving';
+
+  if(match){
+    document.getElementById('finding').textContent = 'You have ' + pieceLabel + ' sitting in the ' + selectedDir + ' — the ' + d.area.toLowerCase() + ' area — which is exactly the kind of thing this direction rewards.';
+    document.getElementById('fix').textContent = 'Leave it where it is. This is one of the four directions that call for ' + wantLabel + ', so the placement is reinforcing ' + d.area.toLowerCase() + ' rather than working against it.';
+  } else {
+    document.getElementById('finding').textContent = 'You have ' + pieceLabel + ' sitting in the ' + selectedDir + ' — the ' + d.area.toLowerCase() + ' area — but this direction actually calls for ' + wantLabel + ', not what\'s there now.';
+    document.getElementById('fix').textContent = piece === 'solid'
+      ? 'Where you can, lighten this spot up — swap the heavy piece for something smaller, or add a mirror, plant, or a bit of open shelving so the area can breathe.'
+      : 'Where you can, ground this spot — a solid piece of furniture or a heavier object will anchor the area instead of letting the energy pass straight through.';
+  }
+
+  document.getElementById('report').style.display = 'block';
+  document.getElementById('report').scrollIntoView({behavior:'smooth', block:'start'});
+});
+</script>
+</body>
+</html>

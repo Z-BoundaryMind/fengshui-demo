@@ -43,6 +43,7 @@
   .finding{font-size:16px;margin-bottom:14px;}
   .fix{font-size:15px;color:var(--ink-soft);padding-left:16px;border-left:2px solid var(--gold);}
   .note{font-size:13px;color:var(--ink-soft);margin-top:36px;border-top:1px solid var(--line);padding-top:16px;}
+  .disclaimer{font-size:11px;color:var(--ink-soft);opacity:0.75;margin-top:10px;}
   .verdict{display:inline-block;font-size:13px;padding:4px 10px;border-radius:2px;margin-bottom:14px;}
   .verdict.good{background:rgba(51,80,63,0.12);color:var(--jade);}
   .verdict.watch{background:rgba(140,74,47,0.12);color:var(--clay);}
@@ -54,16 +55,16 @@
   <header style="margin-bottom:48px;">
     <p class="kicker">Compass reading — layout 002</p>
     <h1>Where your energy is sitting</h1>
-    <p class="lede">This one uses true compass direction, not the door — the classical eight-direction method a lineage-trained reading is built on. You'll need to know which way is north.</p>
+    <p class="lede">This one uses true compass direction, not the door — the method a lineage-trained reading is built on. You'll need to know which way is north.</p>
   </header>
 
   <div class="panel">
     <div class="field">
       <label for="room">Which room are we reading?</label>
       <select id="room">
-        <option value="bedroom">Bedroom</option>
-        <option value="office">Home office</option>
         <option value="living">Living room</option>
+        <option value="bedroom">Bedroom</option>
+        <option value="office">Study</option>
       </select>
     </div>
 
@@ -71,7 +72,7 @@
       <label for="piece">What are we placing?</label>
       <select id="piece">
         <option value="solid">Something heavy and solid — a wardrobe, bookshelf, large cabinet</option>
-        <option value="open">Something open or moving — a mirror, a window, a fish tank, an open shelf</option>
+        <option value="open">Something open or moving — a window, a fish tank</option>
       </select>
     </div>
 
@@ -115,19 +116,20 @@
     </div>
   </div>
 
-  <p class="note">This uses the classical numbered-direction rule — north, southwest, east and southeast call for solid, still weight; northwest, west, northeast and south call for openness and movement. A full reading also reads what sits outside the building in each direction, not just furniture inside a single room.</p>
+  <p class="note">Based on a classical compass-school method passed down through lineage training. This quick reading checks one placement in one room — a full reading weighs all eight directions together, along with the landform and features outside your building.</p>
+  <p class="disclaimer">For cultural and entertainment reference only — not a basis for any decision.</p>
 </div>
 
 <script>
 var directions = {
-  N:  {area:'Career', wants:'solid', gua:'Kan'},
-  SW: {area:'Relationships', wants:'solid', gua:'Kun'},
-  E:  {area:'Family', wants:'solid', gua:'Zhen'},
-  SE: {area:'Wealth', wants:'solid', gua:'Xun'},
-  NW: {area:'Helpful people', wants:'open', gua:'Qian'},
-  W:  {area:'Creativity', wants:'open', gua:'Dui'},
-  NE: {area:'Knowledge', wants:'open', gua:'Gen'},
-  S:  {area:'Reputation', wants:'open', gua:'Li'}
+  N:  {palace:'Kan',  area:'Career',              wants:'solid', tip:'North does best anchored — a solid piece here can act like a steady backbone for your work life.'},
+  NE: {palace:'Gen',  area:'Growth & savings',     wants:'open',  tip:'Northeast likes room to breathe — keeping it light and uncluttered supports things quietly building up over time.'},
+  E:  {palace:'Zhen', area:'Drive & momentum',     wants:'solid', tip:'East rewards a bit of height and presence — a tall shelf or plant here can back up forward motion.'},
+  SE: {palace:'Xun',  area:'Wealth',               wants:'solid', tip:'Southeast is the wealth corner — something solid here helps what comes in actually stay.'},
+  S:  {palace:'Li',   area:'Reputation',           wants:'open',  tip:'South likes light and openness — keep this corner from feeling boxed in so your visibility isn\'t blocked.'},
+  SW: {palace:'Kun',  area:'Relationships',        wants:'solid', tip:'Southwest wants weight and steadiness — a solid piece here supports the relationship side of the home.'},
+  W:  {palace:'Dui',  area:'Expression & connection', wants:'open', tip:'West likes ease and lightness — an open, uncluttered spot here supports how smoothly you connect with people.'},
+  NW: {palace:'Qian', area:'Mentors & leadership', wants:'open',  tip:'Northwest prefers calm and airflow — avoid anything heavy or overheated here to keep support and opportunity flowing in.'}
 };
 
 var selectedDir = null;
@@ -190,24 +192,20 @@ document.getElementById('gen').addEventListener('click', function(){
   var match = (piece === d.wants);
 
   var verdict = document.getElementById('verdict');
-  verdict.textContent = match ? 'Well placed' : 'Worth adjusting';
+  verdict.textContent = match ? 'Good placement' : 'Misplaced';
   verdict.className = 'verdict ' + (match ? 'good' : 'watch');
 
   document.getElementById('areaName').textContent = d.area;
   document.getElementById('wants').textContent = d.wants === 'solid' ? 'Weight, stillness' : 'Openness, flow';
 
   var pieceLabel = piece === 'solid' ? 'a heavy, solid piece' : 'an open or moving piece';
-  var wantLabel = d.wants === 'solid' ? 'something solid and still' : 'something open and moving';
 
   if(match){
-    document.getElementById('finding').textContent = 'You have ' + pieceLabel + ' sitting in the ' + selectedDir + ' — the ' + d.area.toLowerCase() + ' area — which is exactly the kind of thing this direction rewards.';
-    document.getElementById('fix').textContent = 'Leave it where it is. This is one of the four directions that call for ' + wantLabel + ', so the placement is reinforcing ' + d.area.toLowerCase() + ' rather than working against it.';
+    document.getElementById('finding').textContent = 'You have ' + pieceLabel + ' sitting in the ' + selectedDir + ' (' + d.palace + ') — the ' + d.area.toLowerCase() + ' area — which is exactly the kind of thing this direction rewards.';
   } else {
-    document.getElementById('finding').textContent = 'You have ' + pieceLabel + ' sitting in the ' + selectedDir + ' — the ' + d.area.toLowerCase() + ' area — but this direction actually calls for ' + wantLabel + ', not what\'s there now.';
-    document.getElementById('fix').textContent = piece === 'solid'
-      ? 'Where you can, lighten this spot up — swap the heavy piece for something smaller, or add a mirror, plant, or a bit of open shelving so the area can breathe.'
-      : 'Where you can, ground this spot — a solid piece of furniture or a heavier object will anchor the area instead of letting the energy pass straight through.';
+    document.getElementById('finding').textContent = 'You have ' + pieceLabel + ' sitting in the ' + selectedDir + ' (' + d.palace + ') — the ' + d.area.toLowerCase() + ' area — but this may tend to work against what the direction is looking for.';
   }
+  document.getElementById('fix').textContent = d.tip;
 
   document.getElementById('report').style.display = 'block';
   document.getElementById('report').scrollIntoView({behavior:'smooth', block:'start'});
